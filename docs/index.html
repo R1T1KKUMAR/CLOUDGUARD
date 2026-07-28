@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CloudGuard - Documentation</title>
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --surface: #ffffff;
+    --surface-2: #f0f2f5;
+    --border: #e3e6eb;
+    --text: #1c2330;
+    --text-soft: #5a6472;
+    --text-faint: #8b94a3;
+    --accent: #0d9488;
+    --accent-soft: #d5efeb;
+    --accent-ink: #0b5f57;
+    --indigo: #4f46e5;
+    --code-bg: #f4f5f7;
+    --crit: #dc2626;
+    --high: #ea580c;
+    --med: #ca8a04;
+    --low: #2563eb;
+    --shadow: 0 1px 2px rgba(20,30,50,.04), 0 4px 16px rgba(20,30,50,.05);
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1117;
+      --surface: #161b24;
+      --surface-2: #1c222d;
+      --border: #262d39;
+      --text: #e6e9ef;
+      --text-soft: #a5adbb;
+      --text-faint: #6b7482;
+      --accent: #2dd4bf;
+      --accent-soft: #113b38;
+      --accent-ink: #7ff0e2;
+      --indigo: #a5b4fc;
+      --code-bg: #10151d;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 20px rgba(0,0,0,.35);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent-ink); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .layout { display: flex; max-width: 1180px; margin: 0 auto; gap: 0; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 248px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 28px 20px 40px;
+    border-right: 1px solid var(--border);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .brand-mark {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--accent), var(--indigo));
+    display: grid; place-items: center; color: #fff; font-size: 18px;
+    box-shadow: 0 2px 8px rgba(13,148,136,.35);
+  }
+  .brand-name { font-weight: 700; font-size: 17px; letter-spacing: -.02em; }
+  .brand-sub { font-size: 11px; color: var(--text-faint); margin: 0 0 22px 44px; text-transform: uppercase; letter-spacing: .08em; }
+  .nav-group { font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--text-faint); margin: 18px 0 6px 8px; font-weight: 600; }
+  .nav a {
+    display: block; padding: 6px 10px; border-radius: 7px; color: var(--text-soft);
+    font-size: 14px; transition: background .12s, color .12s;
+  }
+  .nav a:hover { background: var(--surface-2); color: var(--text); text-decoration: none; }
+
+  /* Content */
+  .content { flex: 1; min-width: 0; padding: 40px 48px 96px; }
+  .hero { margin-bottom: 40px; }
+  .hero h1 { font-size: 34px; letter-spacing: -.03em; margin: 0 0 10px; }
+  .tagline { font-size: 17px; color: var(--text-soft); max-width: 62ch; margin: 0; }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .pill {
+    font-size: 12px; padding: 4px 11px; border-radius: 999px;
+    background: var(--surface-2); border: 1px solid var(--border); color: var(--text-soft);
+  }
+  .pill.accent { background: var(--accent-soft); border-color: transparent; color: var(--accent-ink); font-weight: 600; }
+
+  section { scroll-margin-top: 24px; margin-bottom: 52px; }
+  h2 {
+    font-size: 22px; letter-spacing: -.02em; margin: 0 0 16px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+  h3 { font-size: 16px; margin: 28px 0 10px; letter-spacing: -.01em; }
+  p { color: var(--text); }
+  .lead { color: var(--text-soft); }
+
+  code {
+    font-family: var(--mono); font-size: .86em;
+    background: var(--code-bg); padding: 2px 6px; border-radius: 5px;
+    border: 1px solid var(--border);
+  }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 13px;
+    line-height: 1.55; color: var(--text);
+  }
+  pre code { background: none; border: none; padding: 0; font-size: inherit; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px 22px; box-shadow: var(--shadow);
+  }
+  .grid { display: grid; gap: 16px; }
+  .grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+  .module { }
+  .module h4 { margin: 0 0 4px; font-family: var(--mono); font-size: 14px; color: var(--accent-ink); }
+  .module p { margin: 0; font-size: 13.5px; color: var(--text-soft); }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
+  th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--surface-2); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-faint); font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  td code { font-size: 12.5px; white-space: nowrap; }
+  .method { font-family: var(--mono); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 5px; }
+  .method.get { background: var(--low); color: #fff; }
+  .method.post { background: var(--accent); color: #fff; }
+
+  .sev { display: inline-block; min-width: 62px; text-align: center; font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 6px; color: #fff; }
+  .sev.crit { background: var(--crit); } .sev.high { background: var(--high); }
+  .sev.med { background: var(--med); } .sev.low { background: var(--low); }
+
+  /* Architecture diagram */
+  .arch { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .node {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 18px; font-size: 14px; font-weight: 600; text-align: center; box-shadow: var(--shadow);
+  }
+  .node.accent { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-ink); }
+  .node.indigo { border-color: var(--indigo); }
+  .arrow { color: var(--text-faint); font-size: 20px; line-height: 1; padding: 6px 0; }
+  .row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .services { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 480px; }
+  .chip { font-family: var(--mono); font-size: 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 7px; padding: 5px 11px; }
+
+  /* Callouts */
+  .note { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 14px; }
+  .note.warn { border-left-color: var(--high); background: color-mix(in srgb, var(--high) 12%, transparent); }
+  .note strong { color: var(--text); }
+
+  ul.clean { list-style: none; padding: 0; margin: 0; }
+  ul.clean li { padding: 5px 0 5px 24px; position: relative; color: var(--text-soft); font-size: 14.5px; }
+  ul.clean li::before { content: "→"; position: absolute; left: 0; color: var(--accent); }
+
+  .steps { counter-reset: step; padding: 0; list-style: none; margin: 0; }
+  .steps li { counter-increment: step; position: relative; padding: 0 0 20px 44px; }
+  .steps li::before {
+    content: counter(step); position: absolute; left: 0; top: 0;
+    width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff;
+    display: grid; place-items: center; font-size: 13px; font-weight: 700;
+  }
+  .steps li:not(:last-child)::after { content: ""; position: absolute; left: 13px; top: 32px; bottom: 4px; width: 2px; background: var(--border); }
+  .steps h4 { margin: 3px 0 6px; font-size: 15px; }
+  .steps p { margin: 0; font-size: 14px; color: var(--text-soft); }
+
+  footer { border-top: 1px solid var(--border); padding-top: 24px; color: var(--text-faint); font-size: 13px; }
+
+  .menu-toggle { display: none; }
+
+  @media (max-width: 860px) {
+    .sidebar {
+      position: fixed; z-index: 30; left: 0; top: 0; height: 100vh; width: 260px;
+      background: var(--surface); transform: translateX(-100%); transition: transform .2s;
+    }
+    #menu:checked ~ .layout .sidebar { transform: translateX(0); }
+    .menu-toggle {
+      display: grid; place-items: center; position: fixed; z-index: 40; top: 14px; left: 14px;
+      width: 42px; height: 42px; border-radius: 10px; background: var(--surface);
+      border: 1px solid var(--border); box-shadow: var(--shadow); cursor: pointer; font-size: 20px;
+    }
+    .content { padding: 68px 20px 72px; }
+    .grid.cols-2, .grid.cols-3 { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 27px; }
+  }
+</style>
+</head>
+<body>
+
+<input type="checkbox" id="menu" hidden>
+<label for="menu" class="menu-toggle" aria-label="Toggle menu">☰</label>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">🛡️</div>
+      <div class="brand-name">CloudGuard</div>
+    </div>
+    <p class="brand-sub">Security Auditor</p>
+    <nav class="nav">
+      <div class="nav-group">Overview</div>
+      <a href="#overview">What it is</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#phases">Feature phases</a>
+      <div class="nav-group">Backend</div>
+      <a href="#modules">Module reference</a>
+      <a href="#scanners">Scanners &amp; checks</a>
+      <a href="#severity">Severity scoring</a>
+      <a href="#api">API reference</a>
+      <div class="nav-group">Operations</div>
+      <a href="#setup">Setup &amp; deploy</a>
+      <a href="#infra">Infrastructure</a>
+      <a href="#remediation">Remediation</a>
+      <a href="#roadmap">Roadmap</a>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <header class="hero">
+      <h1>CloudGuard Documentation</h1>
+      <p class="tagline">An agentic security &amp; compliance auditor that continuously scans an AWS account, reasons about findings with Amazon Bedrock, scores severity, and remediates issues after explicit approval.</p>
+      <div class="pills">
+        <span class="pill accent">Phase 1 scaffold</span>
+        <span class="pill">Python 3.14</span>
+        <span class="pill">boto3</span>
+        <span class="pill">FastAPI</span>
+        <span class="pill">Amazon Bedrock</span>
+        <span class="pill">DynamoDB</span>
+        <span class="pill">CloudFormation</span>
+      </div>
+    </header>
+
+    <!-- OVERVIEW -->
+    <section id="overview">
+      <h2>What it is</h2>
+      <p class="lead">CloudGuard walks your AWS account service by service, collects security-relevant configuration facts, and turns each problem into a <strong>Finding</strong> - one typed record that flows through the whole system. Findings are scored deterministically, enriched with an AI explanation and recommended fix, stored in DynamoDB, and surfaced on a dashboard where a human approves or rejects each remediation.</p>
+      <div class="grid cols-3" style="margin-top:20px">
+        <div class="card module"><h4>Detect</h4><p>Six scanners inspect IAM, S3, EC2, Security Groups, Lambda, and AWS Config for misconfigurations and non-compliance.</p></div>
+        <div class="card module"><h4>Reason</h4><p>Bedrock explains the real-world risk, assigns a severity score, and recommends a concrete fix - with a deterministic fallback if the model is unavailable.</p></div>
+        <div class="card module"><h4>Act</h4><p>High-severity findings fire SNS alerts. Approved findings are remediated by narrowly-scoped boto3 handlers - never automatically.</p></div>
+      </div>
+    </section>
+
+    <!-- ARCHITECTURE -->
+    <section id="architecture">
+      <h2>Architecture</h2>
+      <p class="lead">A dashboard talks to a FastAPI Lambda through API Gateway. Scans run in a dedicated Lambda that drives the boto3 scanner engine; findings land in DynamoDB and branch out to alerts and optional remediation.</p>
+      <div class="card" style="margin-top:20px">
+        <div class="arch">
+          <div class="node indigo">React Dashboard</div>
+          <div class="arrow">↓ HTTPS</div>
+          <div class="node">API Gateway</div>
+          <div class="arrow">↓</div>
+          <div class="node accent">Lambda (API) · FastAPI</div>
+          <div class="arrow">↓</div>
+          <div class="row">
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div class="node accent">Scan Lambda</div>
+              <div class="arrow">↓</div>
+              <div class="node">boto3 Scanner</div>
+              <div class="arrow">↓</div>
+              <div class="services">
+                <span class="chip">IAM</span><span class="chip">S3</span><span class="chip">EC2</span>
+                <span class="chip">Lambda</span><span class="chip">Security Groups</span>
+                <span class="chip">CloudTrail</span><span class="chip">Config</span>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div class="node indigo">Amazon Bedrock</div>
+              <div class="arrow" style="opacity:.4">AI analysis</div>
+            </div>
+          </div>
+          <div class="arrow">↓</div>
+          <div class="node">Findings DB · DynamoDB</div>
+          <div class="arrow">↓</div>
+          <div class="row">
+            <div class="node">SNS Alerts</div>
+            <div class="node">Severity Scoring</div>
+            <div class="node">SSM / boto3 Remediation</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHASES -->
+    <section id="phases">
+      <h2>Feature phases</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Phase</th><th>Capability</th><th>What happens</th></tr></thead>
+          <tbody>
+            <tr><td><strong>1</strong></td><td>Basic scanner</td><td>Scan IAM users &amp; policies, S3 buckets, EC2, and security groups via boto3.</td></tr>
+            <tr><td><strong>2</strong></td><td>AI analysis</td><td>Send each finding to Bedrock; get back risk, severity, and a recommended fix.</td></tr>
+            <tr><td><strong>3</strong></td><td>Severity score</td><td>Every issue gets a 0-100 score mapped to Critical / High / Medium / Low.</td></tr>
+            <tr><td><strong>4</strong></td><td>Approval workflow</td><td>Dashboard lists findings with Approve / Reject actions.</td></tr>
+            <tr><td><strong>5</strong></td><td>Auto remediation</td><td>Approved fixes call boto3 (e.g. <code>put_public_access_block</code>).</td></tr>
+            <tr><td><strong>6</strong></td><td>Notifications</td><td>SNS publishes alerts for high-severity findings.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- MODULES -->
+    <section id="modules">
+      <h2>Module reference</h2>
+      <p class="lead">The <code>backend/</code> package is organized so each module owns one concern. Only <code>database.py</code> knows DynamoDB; only <code>ai.py</code> knows Bedrock; scanners never write anything.</p>
+      <div class="grid cols-2" style="margin-top:20px">
+        <div class="card module"><h4>models.py</h4><p>The shared <code>Finding</code> dataclass with a deterministic <code>FindingId</code>, so re-scanning the same issue updates rather than duplicates the record.</p></div>
+        <div class="card module"><h4>config.py</h4><p>Environment-driven configuration. Region defaults to <code>ap-south-1</code>. No AWS calls at import time.</p></div>
+        <div class="card module"><h4>scanner.py</h4><p>The orchestrator: runs every scanner, scores, enriches with AI, persists, and alerts. Entry point for the Scan Lambda.</p></div>
+        <div class="card module"><h4>severity.py</h4><p>Deterministic 0-100 baseline scores and the Critical/High/Medium/Low banding - works even without Bedrock.</p></div>
+        <div class="card module"><h4>ai.py</h4><p>Bedrock enrichment via the model-agnostic <strong>Converse API</strong>. Never crashes a scan; falls back to the baseline score on failure.</p></div>
+        <div class="card module"><h4>remediation.py</h4><p>Opt-in, per-<code>check_id</code> fix handlers. Refuses unknown checks and is disabled unless explicitly enabled.</p></div>
+        <div class="card module"><h4>database.py</h4><p>DynamoDB access layer with float→Decimal handling and idempotent batch writes.</p></div>
+        <div class="card module"><h4>notifications.py</h4><p>Publishes SNS alerts for findings at or above the severity threshold.</p></div>
+        <div class="card module"><h4>app.py</h4><p>FastAPI app exposing scan/findings/approval endpoints, with a Mangum handler for Lambda + API Gateway.</p></div>
+        <div class="card module"><h4>scanners/</h4><p>One module per service plus <code>base.py</code> and an auto-registry in <code>__init__.py</code> - add a class, the orchestrator picks it up.</p></div>
+      </div>
+    </section>
+
+    <!-- SCANNERS -->
+    <section id="scanners">
+      <h2>Scanners &amp; checks</h2>
+      <p class="lead">Each scanner subclasses <code>BaseScanner</code> and yields findings. These are the checks implemented in the Phase 1 scaffold (deeper checks are marked with <code>TODO</code> in the source).</p>
+      <div class="table-wrap" style="margin-top:18px">
+        <table>
+          <thead><tr><th>Service</th><th>check_id</th><th>Detects</th><th>Baseline</th></tr></thead>
+          <tbody>
+            <tr><td>S3</td><td><code>s3-public-access</code></td><td>Bucket not fully covered by Block Public Access</td><td><span class="sev crit">95 Crit</span></td></tr>
+            <tr><td>Security Group</td><td><code>sg-world-open-port</code></td><td>SSH/RDP/MySQL/Postgres open to <code>0.0.0.0/0</code></td><td><span class="sev crit">90 Crit</span></td></tr>
+            <tr><td>Lambda</td><td><code>lambda-public-url</code></td><td>Function URL with <code>AuthType = NONE</code></td><td><span class="sev high">85 High</span></td></tr>
+            <tr><td>IAM</td><td><code>iam-user-no-mfa</code></td><td>User with no MFA device registered</td><td><span class="sev high">80 High</span></td></tr>
+            <tr><td>EC2</td><td><code>ec2-imdsv1-enabled</code></td><td>Instance metadata allows IMDSv1 (token optional)</td><td><span class="sev high">70 High</span></td></tr>
+            <tr><td>S3</td><td><code>s3-no-encryption</code></td><td>No default server-side encryption</td><td><span class="sev med">65 Med</span></td></tr>
+            <tr><td>EC2</td><td><code>ec2-public-ip</code></td><td>Instance exposed with a public IP</td><td><span class="sev med">55 Med</span></td></tr>
+            <tr><td>Config</td><td><code>config-*</code></td><td>Any resource marked NON_COMPLIANT by an AWS Config rule</td><td><span class="sev high">75 High</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SEVERITY -->
+    <section id="severity">
+      <h2>Severity scoring</h2>
+      <p class="lead">Every finding gets a deterministic baseline score from <code>severity.py</code>. The AI layer may override the number, but the baseline guarantees the system works - and stays testable - without Bedrock.</p>
+      <div class="grid cols-2" style="margin-top:18px">
+        <div class="card">
+          <h3 style="margin-top:0">Bands</h3>
+          <p style="margin:8px 0"><span class="sev crit">Critical</span> &nbsp; score ≥ 90</p>
+          <p style="margin:8px 0"><span class="sev high">High</span> &nbsp; 70 – 89</p>
+          <p style="margin:8px 0"><span class="sev med">Medium</span> &nbsp; 40 – 69</p>
+          <p style="margin:8px 0"><span class="sev low">Low</span> &nbsp; &lt; 40</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Flow</h3>
+          <pre style="margin:0"><code>scan_finding()
+  → severity.score_finding()   # baseline
+  → ai.analyze()               # may override
+  → repo.save_many()           # persist
+  → send_alert() if ≥ threshold</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- API -->
+    <section id="api">
+      <h2>API reference</h2>
+      <p class="lead">FastAPI endpoints in <code>app.py</code>. Run locally with <code>uvicorn app:app --reload</code>; in the cloud the same app is served through Mangum behind API Gateway.</p>
+      <div class="table-wrap" style="margin-top:18px">
+        <table>
+          <thead><tr><th>Method</th><th>Path</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><span class="method get">GET</span></td><td><code>/health</code></td><td>Liveness probe.</td></tr>
+            <tr><td><span class="method post">POST</span></td><td><code>/scan</code></td><td>Run all scanners, score, enrich, persist, and return findings.</td></tr>
+            <tr><td><span class="method get">GET</span></td><td><code>/findings</code></td><td>List all stored findings.</td></tr>
+            <tr><td><span class="method get">GET</span></td><td><code>/findings/{id}</code></td><td>Fetch a single finding (404 if missing).</td></tr>
+            <tr><td><span class="method post">POST</span></td><td><code>/findings/{id}/approve</code></td><td>Approve and apply the remediation for a finding.</td></tr>
+            <tr><td><span class="method post">POST</span></td><td><code>/findings/{id}/reject</code></td><td>Mark a finding rejected; no action taken.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SETUP -->
+    <section id="setup">
+      <h2>Setup &amp; deploy</h2>
+      <div class="note warn" style="margin-bottom:22px">
+        <strong>No AWS CLI.</strong> All AWS resources are provisioned from the console - either by deploying the CloudFormation template or through the service consoles directly.
+      </div>
+      <ol class="steps">
+        <li>
+          <h4>Deploy the core stack</h4>
+          <p>In the CloudFormation console, create a stack from <code>infrastructure/cloudformation/cloudguard-core.yaml</code>. It provisions the DynamoDB table, SNS topic + email subscription, and the Lambda execution role.</p>
+        </li>
+        <li>
+          <h4>Enable AWS Config &amp; Bedrock</h4>
+          <p>Turn on AWS Config (record all resources) and request Bedrock model access in <code>ap-south-1</code> from their consoles. These are click-throughs the code can't do for you.</p>
+        </li>
+        <li>
+          <h4>Configure the backend</h4>
+          <p>Copy <code>backend/.env.example</code> to <code>.env</code> and fill in the CloudFormation outputs (table name, topic ARN, model id).</p>
+        </li>
+        <li>
+          <h4>Run locally</h4>
+          <pre style="margin:8px 0 0"><code>cd backend
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+uvicorn app:app --reload
+
+curl -X POST localhost:8000/scan</code></pre>
+        </li>
+      </ol>
+    </section>
+
+    <!-- INFRA -->
+    <section id="infra">
+      <h2>Infrastructure</h2>
+      <p class="lead">Everything in <code>infrastructure/</code> is deployable without a CLI and version-controlled with the code.</p>
+      <div class="grid cols-3" style="margin-top:18px">
+        <div class="card module"><h4>cloudformation/</h4><p><code>cloudguard-core.yaml</code> - DynamoDB (on-demand, encrypted, PITR), SNS topic + subscription, and <code>CloudGuardLambdaRole</code> with scoped writes.</p></div>
+        <div class="card module"><h4>policies/</h4><p><code>cloudguard-scan-readonly.json</code> - the least-privilege read policy to swap in for the broad managed <code>ReadOnlyAccess</code>.</p></div>
+        <div class="card module"><h4>lambda/</h4><p><code>scan_handler.py</code> - the Scan Lambda entrypoint that invokes the orchestrator.</p></div>
+      </div>
+      <h3>IAM role permissions</h3>
+      <ul class="clean">
+        <li><code>AWSLambdaBasicExecutionRole</code> + <code>ReadOnlyAccess</code> for scanning</li>
+        <li>Scoped DynamoDB writes on the findings table only</li>
+        <li><code>sns:Publish</code> to the alerts topic only</li>
+        <li><code>bedrock:InvokeModel</code> for AI analysis</li>
+        <li>Narrow S3 remediation actions (public-access block + encryption)</li>
+      </ul>
+    </section>
+
+    <!-- REMEDIATION -->
+    <section id="remediation">
+      <h2>Remediation</h2>
+      <div class="note">
+        <strong>Remediation never runs automatically.</strong> It is disabled unless <code>CLOUDGUARD_REMEDIATION_ENABLED=true</code>, and each fix runs only after a human approves that specific finding in the dashboard.
+      </div>
+      <p style="margin-top:18px">Handlers are keyed by <code>check_id</code>, so CloudGuard only ever applies a fix that has been explicitly written and reviewed. Unknown checks are refused rather than guessed at.</p>
+      <div class="table-wrap" style="margin-top:12px">
+        <table>
+          <thead><tr><th>check_id</th><th>boto3 action</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><code>s3-public-access</code></td><td><code>put_public_access_block()</code></td><td><span class="pill accent">ready</span></td></tr>
+            <tr><td><code>s3-no-encryption</code></td><td><code>put_bucket_encryption()</code></td><td><span class="pill accent">ready</span></td></tr>
+            <tr><td><code>sg-world-open-port</code></td><td><code>revoke_security_group_ingress()</code></td><td><span class="pill">planned</span></td></tr>
+            <tr><td><code>ec2-imdsv1-enabled</code></td><td><code>modify_instance_metadata_options()</code></td><td><span class="pill">planned</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ROADMAP -->
+    <section id="roadmap">
+      <h2>Roadmap</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Week</th><th>Focus</th><th>Deliverables</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>AWS setup</td><td>IAM, Lambda, API Gateway, DynamoDB, SNS</td></tr>
+            <tr><td>2</td><td>Scanner engine</td><td>IAM, S3, EC2, Security Group scanners</td></tr>
+            <tr><td>3</td><td>Bedrock integration</td><td>Prompt engineering, risk analysis, severity</td></tr>
+            <tr><td>4</td><td>Dashboard</td><td>React, charts, findings table, approve button</td></tr>
+            <tr><td>5</td><td>Auto remediation</td><td>SSM, Lambda, approval workflow</td></tr>
+            <tr><td>6</td><td>Deployment</td><td>GitHub, CloudFormation, docs, demo video</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:20px" class="lead"><strong>Current status:</strong> Phase 1 scaffold in place - full scan→score→AI→persist→alert→remediate pipeline with six scanners. Scanner checks and remediation handlers are being fleshed out; the React dashboard is next.</p>
+    </section>
+
+    <footer>
+      CloudGuard - Agentic Security &amp; Compliance Auditor · Generated documentation · Phase 1 scaffold
+    </footer>
+  </main>
+</div>
+
+</body>
+</html>

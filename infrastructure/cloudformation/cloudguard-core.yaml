@@ -1,0 +1,117 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  CloudGuard core resources - DynamoDB findings table, SNS alerts topic, and the
+  Lambda execution role. Deploy this from the AWS CloudFormation console
+  (no CLI required). Outputs are consumed by the backend .env and the Lambda
+  functions.
+
+Parameters:
+  AlertEmail:
+    Type: String
+    Description: Email address subscribed to CloudGuard alerts (confirm via email).
+    AllowedPattern: "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+
+  FindingsTableName:
+    Type: String
+    Default: CloudGuardFindings
+
+  AlertsTopicName:
+    Type: String
+    Default: CloudGuardAlerts
+
+Resources:
+  # --- DynamoDB: findings store (on-demand billing) -----------------------
+  FindingsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref FindingsTableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: FindingId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: FindingId
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+
+  # --- SNS: alerts topic + email subscription -----------------------------
+  AlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Ref AlertsTopicName
+      DisplayName: CloudGuard Alerts
+
+  AlertsSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref AlertsTopic
+      Protocol: email
+      Endpoint: !Ref AlertEmail
+
+  # --- IAM: Lambda execution role -----------------------------------------
+  # Starts from AWS-managed ReadOnlyAccess for scanning, plus a scoped inline
+  # policy for the specific write actions CloudGuard needs. Replace
+  # ReadOnlyAccess with the tighter policy in infrastructure/policies/ once the
+  # required scan actions are finalised.
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CloudGuardLambdaRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
+      Policies:
+        - PolicyName: CloudGuardScopedWrites
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: FindingsTableAccess
+                Effect: Allow
+                Action:
+                  - dynamodb:PutItem
+                  - dynamodb:GetItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:BatchWriteItem
+                  - dynamodb:Scan
+                  - dynamodb:Query
+                Resource: !GetAtt FindingsTable.Arn
+              - Sid: PublishAlerts
+                Effect: Allow
+                Action: sns:Publish
+                Resource: !Ref AlertsTopic
+              - Sid: InvokeBedrock
+                Effect: Allow
+                Action: bedrock:InvokeModel
+                Resource: "*"
+              # Remediation actions are intentionally narrow. Extend as new
+              # remediation handlers are added in backend/remediation.py.
+              - Sid: RemediationActions
+                Effect: Allow
+                Action:
+                  - s3:PutEncryptionConfiguration
+                  - s3:PutBucketPublicAccessBlock
+                Resource: "*"
+
+Outputs:
+  FindingsTableName:
+    Value: !Ref FindingsTable
+    Export:
+      Name: CloudGuard-FindingsTableName
+  AlertsTopicArn:
+    Value: !Ref AlertsTopic
+    Export:
+      Name: CloudGuard-AlertsTopicArn
+  LambdaRoleArn:
+    Value: !GetAtt LambdaExecutionRole.Arn
+    Export:
+      Name: CloudGuard-LambdaRoleArn

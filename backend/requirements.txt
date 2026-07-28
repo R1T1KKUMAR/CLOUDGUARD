@@ -1,0 +1,9 @@
+# CloudGuard backend dependencies.
+# boto3 is provided by the Lambda runtime, but pinning it keeps local dev
+# aligned with what runs in the cloud.
+boto3>=1.34
+botocore>=1.34
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-dotenv>=1.0
+mangum>=0.17        # ASGI -> AWS Lambda / API Gateway adapter

@@ -1,0 +1,60 @@
+{
+  "Version": "2012-10-17",
+  "Comment": "Least-privilege read-only scanning policy. Use this in place of the broad AWS-managed ReadOnlyAccess once the scanner action set is stable (see cloudguard-core.yaml).",
+  "Statement": [
+    {
+      "Sid": "IAMRead",
+      "Effect": "Allow",
+      "Action": [
+        "iam:ListUsers",
+        "iam:ListMFADevices",
+        "iam:ListAccessKeys",
+        "iam:GetAccessKeyLastUsed",
+        "iam:ListAttachedUserPolicies",
+        "iam:ListPolicies",
+        "iam:GetPolicy",
+        "iam:GetPolicyVersion"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "S3Read",
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListAllMyBuckets",
+        "s3:GetBucketPublicAccessBlock",
+        "s3:GetEncryptionConfiguration",
+        "s3:GetBucketPolicyStatus"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "EC2Read",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeInstances",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeVolumes"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "LambdaRead",
+      "Effect": "Allow",
+      "Action": [
+        "lambda:ListFunctions",
+        "lambda:GetFunctionUrlConfig"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ConfigRead",
+      "Effect": "Allow",
+      "Action": [
+        "config:DescribeConfigRules",
+        "config:GetComplianceDetailsByConfigRule"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
